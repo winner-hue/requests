@@ -18,12 +18,12 @@ public class Util {
     public static String randomSSL(String ssl) {
         String[] sslArray = ssl.split(",");
         List<String> list = Arrays.asList(sslArray);
+        List<String> newLIst = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             int i1 = random.nextInt(list.size());
-            list.add(list.get(i1));
-            list.remove(i1);
+            newLIst.add(list.get(i1));
         }
-        return StringUtils.join(list, ",");
+        return StringUtils.join(newLIst, ",");
     }
 
     public static List<ConnectionSpec> randomSSL() {
@@ -43,7 +43,7 @@ public class Util {
                 "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA");
 
         ConnectionSpec compatibleTLS = new ConnectionSpec.Builder(ConnectionSpec.COMPATIBLE_TLS)
-                .tlsVersions(TlsVersion.TLS_1_2, TlsVersion.TLS_1_3, TlsVersion.TLS_1_1, TlsVersion.TLS_1_0)
+                .tlsVersions(TlsVersion.TLS_1_3, TlsVersion.TLS_1_2)
                 .cipherSuites(ssl)
                 .build();
 
@@ -51,17 +51,13 @@ public class Util {
                 "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256," +
                 "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256");
         ConnectionSpec modernTLS = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                .tlsVersions(TlsVersion.TLS_1_2, TlsVersion.TLS_1_3)
+                .tlsVersions(TlsVersion.TLS_1_3, TlsVersion.TLS_1_2)
                 .cipherSuites(ssl)
                 .build();
-        ConnectionSpec restrictedTls = new ConnectionSpec.Builder(ConnectionSpec.RESTRICTED_TLS)
-                .tlsVersions(TlsVersion.TLS_1_2, TlsVersion.TLS_1_3)
-                .cipherSuites(ssl)
-                .build();
+
         List<ConnectionSpec> connectionSpecList = new ArrayList<>();
         connectionSpecList.add(modernTLS);
         connectionSpecList.add(compatibleTLS);
-        connectionSpecList.add(restrictedTls);
         return connectionSpecList;
     }
 }
