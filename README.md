@@ -6,12 +6,15 @@ java requests by okhttp3
 
 - 直接使用jar包 下载jar包，通过 add as library 导入项目
 
-- 通过pom导入 icu.fanjie requests 1.0
+- 通过pom导入 
+```maven
        <dependency>
          <groupId>icu.fanjie</groupId>
          <artifactId>requests</artifactId>
          <version>1.0</version>
        </dependency>
+
+```
 
 - jar包引入 参考 https://www.cnblogs.com/zhaochi/p/12694275.html
 
