@@ -1,10 +1,8 @@
 package icu.fanjie;
 
-import okhttp3.CipherSuite;
 import okhttp3.ConnectionSpec;
 import okhttp3.TlsVersion;
 import org.apache.commons.lang3.StringUtils;
-import pj.JUA;
 
 import java.util.ArrayList;
 import java.util.Arrays;
