@@ -8,11 +8,21 @@ java requests by okhttp3
 
 - 通过pom导入 
 ```maven
+       <repositories>
+         <repository>
+            <id>icu-fanjie-repo</id>
+            <url>https://raw.githubusercontent.com/winner-hue/mvn-repo/master/</url>
+         </repository>
+       </repositories>
        <dependency>
          <groupId>icu.fanjie</groupId>
          <artifactId>requests</artifactId>
          <version>1.0</version>
        </dependency>
+  
+  如果遇到  Cannot resolve 请求的名称有效，但是找不到请求的类型的数据。 (raw.githubusercontent.com)错误，请在hosts文件夹下添加：199.232.68.133 raw.githubusercontent.com
+  windows的hosts地址为：C:\Windows\System32\drivers\etc\hosts
+  linux/mac的hosts地址为：/etc/hosts
 
 ```
 
