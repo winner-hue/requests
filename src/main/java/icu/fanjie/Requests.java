@@ -60,6 +60,7 @@ public class Requests {
             cookies.add(cookie);
         }
         resp.setCookie(StringUtils.join(cookies, "; "));
+        client.connectionPool().evictAll();
         return resp;
 
     }
