@@ -3,9 +3,14 @@ package icu.fanjie;
 import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.net.ssl.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Requests {
 
-    public static Response request(String method, String url, Params params, Data data, Headers headers, int timeout, boolean allow_redirects, Proxies proxies, List<ConnectionSpec> connectionSpecList) throws IOException {
+    public static Response request(String method, String url, Params params, Data data, Headers headers, int timeout, boolean allow_redirects, Proxies proxies, List<ConnectionSpec> connectionSpecList, Boolean verify) throws IOException {
         if (params != null && params.size() > 0) {
             url = url + params.toString();
         }
@@ -22,12 +27,12 @@ public class Requests {
         if (proxies != null && proxies.size() > 0) {
             String[] proxy = proxies.randomProxy();
             if (proxy[0].equals("auth")) {
-                client = initClient(proxy[1], proxy[2], proxy[3], proxy[4], proxies.getType(), timeout, allow_redirects, connectionSpecList);
+                client = initClient(proxy[1], proxy[2], proxy[3], proxy[4], proxies.getType(), timeout, allow_redirects, connectionSpecList, verify);
             } else {
-                client = initClient(null, null, proxy[1], proxy[2], proxies.getType(), timeout, allow_redirects, connectionSpecList);
+                client = initClient(null, null, proxy[1], proxy[2], proxies.getType(), timeout, allow_redirects, connectionSpecList, verify);
             }
         } else {
-            client = initClient(null, null, null, null, null, timeout, allow_redirects, connectionSpecList);
+            client = initClient(null, null, null, null, null, timeout, allow_redirects, connectionSpecList, verify);
         }
         Request request = null;
 
@@ -65,23 +70,33 @@ public class Requests {
 
     }
 
-    public static Response get(String url, Params params, Headers headers, int timeout, boolean allow_redirects, Proxies proxies, List<ConnectionSpec> connectionSpecList) throws IOException {
-        return request("get", url, params, null, headers, timeout, allow_redirects, proxies, connectionSpecList);
+    public static Response get(String url, Params params, Headers headers, int timeout, boolean allow_redirects, Proxies proxies, List<ConnectionSpec> connectionSpecList, Boolean verify) throws IOException {
+        return request("get", url, params, null, headers, timeout, allow_redirects, proxies, connectionSpecList, verify);
     }
 
-    public static Response post(String url, Params params, Data data, Headers headers, int timeout, boolean allow_redirects, Proxies proxies, List<ConnectionSpec> connectionSpecList) throws IOException {
-        return request("post", url, params, data, headers, timeout, allow_redirects, proxies, connectionSpecList);
+    public static Response post(String url, Params params, Data data, Headers headers, int timeout, boolean allow_redirects, Proxies proxies, List<ConnectionSpec> connectionSpecList, Boolean verify) throws IOException {
+        return request("post", url, params, data, headers, timeout, allow_redirects, proxies, connectionSpecList, verify);
     }
 
 
-    private static OkHttpClient initClient(String proxy_user, String proxy_pwd, String proxy_host, String proxy_port, Proxy.Type type, int timeout, boolean allow_redirects, List<ConnectionSpec> connectionSpecList) {
-        if (connectionSpecList == null) {
-            connectionSpecList = Arrays.asList(ConnectionSpec.MODERN_TLS, ConnectionSpec.COMPATIBLE_TLS, ConnectionSpec.RESTRICTED_TLS);
+    private static OkHttpClient initClient(String proxy_user, String proxy_pwd, String proxy_host, String proxy_port, Proxy.Type type, int timeout, boolean allow_redirects, List<ConnectionSpec> connectionSpecList, boolean verify) {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.connectTimeout(timeout, TimeUnit.SECONDS);
+        builder.followRedirects(allow_redirects);
+        builder.protocols(Arrays.asList(Protocol.HTTP_1_1, Protocol.HTTP_2, Protocol.QUIC));
+        if (!verify) {
+            builder.hostnameVerifier(SSLSocketClient.getHostnameVerifier())
+                    .sslSocketFactory(SSLSocketClient.getSSLSocketFactory(), SSLSocketClient.getX509TrustManager());
+        } else {
+            if (connectionSpecList != null) {
+                builder.connectionSpecs(connectionSpecList);
+            }
+//            else {
+//                Arrays.asList(ConnectionSpec.MODERN_TLS, ConnectionSpec.COMPATIBLE_TLS, ConnectionSpec.RESTRICTED_TLS);
+//            }
         }
         if (proxy_user != null) {
-            return new OkHttpClient.Builder()
-                    .connectTimeout(timeout, TimeUnit.SECONDS)
-                    .connectionSpecs(connectionSpecList)
+            builder
                     .followRedirects(allow_redirects)
                     .protocols(Arrays.asList(Protocol.HTTP_1_1, Protocol.HTTP_2, Protocol.QUIC))
                     .proxy(new Proxy(type, new InetSocketAddress(proxy_host, Integer.parseInt(proxy_port))))
@@ -93,22 +108,20 @@ public class Requests {
                     })
                     .build();
         } else if (proxy_host != null) {
-            return new OkHttpClient.Builder()
+            builder
                     .connectTimeout(timeout, TimeUnit.SECONDS)
-                    .connectionSpecs(connectionSpecList)
                     .followRedirects(allow_redirects)
                     .protocols(Arrays.asList(Protocol.HTTP_1_1, Protocol.HTTP_2, Protocol.QUIC))
                     .proxy(new Proxy(type, new InetSocketAddress(proxy_host, Integer.parseInt(proxy_port))))
                     .build();
 
         } else {
-            return new OkHttpClient.Builder()
+            builder
                     .connectTimeout(timeout, TimeUnit.SECONDS)
-                    .connectionSpecs(connectionSpecList)
                     .followRedirects(allow_redirects)
                     .protocols(Arrays.asList(Protocol.HTTP_1_1, Protocol.HTTP_2, Protocol.QUIC))
                     .build();
         }
-
+        return builder.build();
     }
 }
