@@ -3,14 +3,9 @@ package icu.fanjie;
 import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.net.ssl.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,9 +14,15 @@ import java.util.concurrent.TimeUnit;
 
 public class Requests {
 
-    public static Response request(String method, String url, Params params, Data data, Headers headers, int timeout, boolean allow_redirects, Proxies proxies, List<ConnectionSpec> connectionSpecList, Boolean verify) throws IOException {
+    public static Response request(String method, String url, Params params, Data data, Headers headers, int timeout, Boolean allow_redirects, Proxies proxies, List<ConnectionSpec> connectionSpecList, Boolean verify) throws IOException {
         if (params != null && params.size() > 0) {
             url = url + params.toString();
+        }
+        if (verify == null) {
+            verify = true;
+        }
+        if (allow_redirects == null) {
+            allow_redirects = true;
         }
         OkHttpClient client = null;
         if (proxies != null && proxies.size() > 0) {
@@ -91,9 +92,6 @@ public class Requests {
             if (connectionSpecList != null) {
                 builder.connectionSpecs(connectionSpecList);
             }
-//            else {
-//                Arrays.asList(ConnectionSpec.MODERN_TLS, ConnectionSpec.COMPATIBLE_TLS, ConnectionSpec.RESTRICTED_TLS);
-//            }
         }
         if (proxy_user != null) {
             builder
