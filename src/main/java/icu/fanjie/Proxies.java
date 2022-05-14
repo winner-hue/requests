@@ -8,7 +8,7 @@ import static icu.fanjie.Util.random;
 
 public class Proxies {
     private final List<String[]> proxiesList = new ArrayList<>();
-    private Proxy.Type type;
+    private final Proxy.Type type;
 
     public Proxies(String proxies, Proxy.Type type) {
         this.type = type;

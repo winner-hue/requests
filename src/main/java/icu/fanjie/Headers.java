@@ -1,11 +1,7 @@
 package icu.fanjie;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 public class Headers {
     private final HashMap<String, Object> headers = new LinkedHashMap<>();
@@ -31,6 +27,10 @@ public class Headers {
             header.add(key, (String) headers.get(key));
         }
         return header.build();
+    }
+
+    public HashMap<String, Object> getOriginHeaders() {
+        return headers;
     }
 
     public int size() {

@@ -11,7 +11,6 @@ import java.util.Random;
 
 public class Util {
     public final static Random random = new Random();
-    public static JUA jua = new JUA();
 
     public static String randomSSL(String ssl) {
         String[] sslArray = ssl.split(",");

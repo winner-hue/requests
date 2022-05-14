@@ -1,5 +1,8 @@
 package icu.fanjie;
 
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+
 import javax.net.ssl.*;
 import java.security.KeyStore;
 import java.security.SecureRandom;
@@ -58,4 +61,9 @@ public class SSLSocketClient {
         }
         return trustManager;
     }
+
+    public static SSLConnectionSocketFactory getHttpclientSSLVerify() {
+        return new SSLConnectionSocketFactory(getSSLSocketFactory(), NoopHostnameVerifier.INSTANCE);
+    }
+
 }
