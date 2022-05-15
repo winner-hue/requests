@@ -1,9 +1,11 @@
 package icu.fanjie;
 
-import com.alibaba.fastjson.JSONObject;
 import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.*;
+import org.apache.http.Header;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -13,12 +15,10 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -29,11 +29,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.Inflater;
 
 public class Requests {
 
     public static Response request(String method, String url, Params params, Data data, Headers headers, int timeout, Boolean allow_redirects, Proxies proxies, List<ConnectionSpec> connectionSpecList, Boolean verify, String clientType) throws IOException {
+
         if (params != null && params.size() > 0) {
             url = url + params.toString();
         }

@@ -11,7 +11,7 @@ public class Test {
     public void Header() throws IOException {
         String url = "https://us.shein.com/Mesh-Panel-Shapewear-Panty-p-10320088-cat-3134.html?src_identifier=fc%3DWomen%60sc%3DNEW%20IN%60tc%3D0%60oc%3D0%60ps%3Dtab01navbar01%60jc%3Ddailynew_0&src_module=topcat&src_tab_page_id=page_home1651538654491&scici=navbar_WomenHomePage~~tab01navbar01~~1~~Special_whatsnew~~~~0";
         Headers headers = new Headers("user-agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36");
-        Response response = Requests.request("get", url, null, null, headers, 10000, null, null, null, false, "okhttp");
+        Response response = Requests.request("get", url, null, null, headers, 10000, null, null, null, false, "httpclient");
         System.out.println(response.getHtml());
         System.out.println(response.getStatusCode());
         System.out.println(response.getCookie());
