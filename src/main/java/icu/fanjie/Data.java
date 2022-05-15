@@ -3,6 +3,11 @@ package icu.fanjie;
 import com.alibaba.fastjson.JSONObject;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Data {
     private JSONObject jo = new JSONObject();
@@ -42,5 +47,13 @@ public class Data {
             data.add(key, jo.getString(key));
         }
         return data.build();
+    }
+
+    public List<NameValuePair> getPostParams() {
+        List<NameValuePair> params = new ArrayList<>();
+        for (String key : jo.keySet()) {
+            params.add(new BasicNameValuePair(key, jo.getString(key)));
+        }
+        return params;
     }
 }

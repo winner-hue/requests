@@ -5,8 +5,8 @@ import okhttp3.Request;
 public class Response {
     public int statusCode;
     public String html;
-    public Request request;
-    public okhttp3.Response response;
+    public Object request;
+    public Object response;
     public String cookie;
 
     public int getStatusCode() {
@@ -25,19 +25,19 @@ public class Response {
         this.html = html;
     }
 
-    public Request getRequest() {
+    public Object getRequest() {
         return request;
     }
 
-    public void setRequest(Request request) {
+    public void setRequest(Object request) {
         this.request = request;
     }
 
-    public okhttp3.Response getResponse() {
+    public Object getResponse() {
         return response;
     }
 
-    public void setResponse(okhttp3.Response response) {
+    public void setResponse(Object response) {
         this.response = response;
     }
 

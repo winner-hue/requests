@@ -1,20 +1,25 @@
 package icu.fanjie;
 
+import com.alibaba.fastjson.JSONObject;
 import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
+import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -38,7 +43,6 @@ public class Requests {
         if (allow_redirects == null) {
             allow_redirects = true;
         }
-
         if (clientType == null || "okhttp".equals(clientType)) {
             return okhttpResponse(proxies, timeout, allow_redirects, connectionSpecList, verify, clientType, method, headers, data, url);
         } else if ("httpclient".equals(clientType)) {
@@ -46,7 +50,6 @@ public class Requests {
         } else {
             return curlResponse(proxies, timeout, allow_redirects, connectionSpecList, verify, clientType, method, headers, data, url);
         }
-
 
     }
 
@@ -63,6 +66,7 @@ public class Requests {
     }
 
     private static Response httpclientResponse(Proxies proxies, int timeout, boolean allow_redirects, List<ConnectionSpec> connectionSpecList, boolean verify, String clientType, String method, Headers headers, Data data, String url) throws IOException {
+        Response resp = new Response();
         HttpClient client = null;
         RequestConfig config = null;
         if (proxies != null && proxies.size() > 0) {
@@ -79,20 +83,38 @@ public class Requests {
             config = initConfig(null, null, timeout, allow_redirects);
         }
 
-        HttpRequestBase request = null;
         if (method.equalsIgnoreCase("get")) {
-            request = new HttpGet(url);
+            HttpGet get = new HttpGet(url);
+            return returnHttpclientResponse(get, config, client, resp);
         } else {
-            request = new HttpPost(url);
-        }
-        if (headers.getOriginHeaders() != null) {
-            for (String key : headers.getOriginHeaders().keySet()) {
-                request.addHeader(key, headers.getOriginHeaders().get(key).toString());
+            HttpPost post = new HttpPost(url);
+            if (data.getPostType() == null || "json".equalsIgnoreCase(data.getPostType())) {
+                String dataData = data.getData();
+                post.setEntity(new StringEntity(dataData));
+            } else {
+                List<NameValuePair> postParams = data.getPostParams();
+                post.setEntity(new UrlEncodedFormEntity(postParams));
             }
+            return returnHttpclientResponse(post, config, client, resp);
         }
+    }
 
-
-        return null;
+    private static Response returnHttpclientResponse(HttpRequestBase request, RequestConfig config, HttpClient client, Response resp) throws IOException {
+        request.setConfig(config);
+        HttpResponse execute = client.execute(request);
+        resp.setResponse(execute);
+        resp.setRequest(request);
+        String html = EntityUtils.toString(execute.getEntity(), "utf-8");
+        resp.setHtml(html);
+        resp.setStatusCode(execute.getStatusLine().getStatusCode());
+        Header[] headerList = execute.getHeaders("Set-Cookie");
+        List<String> cookies = new ArrayList<>();
+        for (Header s : headerList) {
+            String cookie = s.getValue().split(";")[0];
+            cookies.add(cookie);
+        }
+        resp.setCookie(StringUtils.join(cookies, "; "));
+        return resp;
     }
 
     private static Response okhttpResponse(Proxies proxies, int timeout, boolean allow_redirects, List<ConnectionSpec> connectionSpecList, boolean verify, String clientType, String method, Headers headers, Data data, String url) throws IOException {
@@ -114,7 +136,7 @@ public class Requests {
                     .build();
 
         } else {
-            if (data.getPostType() == null) {
+            if (data.getPostType() == null || "json".equalsIgnoreCase(data.getPostType())) {
                 request = new Request.Builder().url(url).headers(headers.getHeaders())
                         .post(RequestBody.create(data.getData(), MediaType.parse("application/json; charset=utf-8")))
                         .build();
