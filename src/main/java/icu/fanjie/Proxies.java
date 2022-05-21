@@ -1,12 +1,13 @@
 package icu.fanjie;
 
+import java.io.Serializable;
 import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
 import static icu.fanjie.Util.random;
 
-public class Proxies {
+public class Proxies implements Serializable {
     private final List<String[]> proxiesList = new ArrayList<>();
     private final Proxy.Type type;
 

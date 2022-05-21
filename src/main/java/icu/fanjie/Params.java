@@ -2,12 +2,13 @@ package icu.fanjie;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class Params {
+public class Params implements Serializable {
     private final HashMap<String, Object> map = new LinkedHashMap<>();
 
     public Params(String params) {

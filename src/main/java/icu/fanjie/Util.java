@@ -4,12 +4,13 @@ import okhttp3.ConnectionSpec;
 import okhttp3.TlsVersion;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class Util {
+public class Util implements Serializable {
     public final static Random random = new Random();
 
     public static String randomSSL(String ssl) {

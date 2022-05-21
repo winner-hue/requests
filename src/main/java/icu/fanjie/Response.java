@@ -2,7 +2,9 @@ package icu.fanjie;
 
 import okhttp3.Request;
 
-public class Response {
+import java.io.Serializable;
+
+public class Response implements Serializable {
     public int statusCode;
     public String html;
     public Object request;

@@ -1,9 +1,10 @@
 package icu.fanjie;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-public class Headers {
+public class Headers implements Serializable {
     private final HashMap<String, Object> headers = new LinkedHashMap<>();
 
     public Headers(String params) {

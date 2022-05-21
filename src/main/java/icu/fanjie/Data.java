@@ -6,10 +6,11 @@ import okhttp3.RequestBody;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Data {
+public class Data implements Serializable {
     private JSONObject jo = new JSONObject();
     private final String postType;
 

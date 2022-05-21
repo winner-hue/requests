@@ -22,6 +22,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class Requests {
+public class Requests implements Serializable {
 
     public static Response request(String method, String url, Params params, Data data, Headers headers, int timeout, Boolean allow_redirects, Proxies proxies, List<ConnectionSpec> connectionSpecList, Boolean verify, String clientType) throws IOException {
 
